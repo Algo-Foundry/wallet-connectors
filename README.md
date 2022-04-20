@@ -45,7 +45,7 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 2. Create TestNet accounts on [MyAlgo](https://wallet.myalgo.com/home)
 
 #### WalletConnect
-1. [Library](https://docs.walletconnect.com/quick-start/dapps/node) is included in this the project
+1. [Library](https://docs.walletconnect.com/quick-start/dapps/client) is included in this the project
 2. Integration docs can be found [here](https://developer.algorand.org/docs/get-details/walletconnect/#sign-transaction)
 
 #### Pera Wallet
