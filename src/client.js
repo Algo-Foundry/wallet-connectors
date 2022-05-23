@@ -18,7 +18,7 @@ const getNetworkCredentials = (network) => {
         case "TestNet":
             algod_token = process.env.VUE_APP_ALGOD_TOKEN_TESTNET;
             algod_address = process.env.VUE_APP_ALGOD_SERVER_TESTNET;
-            algod_port = process.env.VUE_APP_ALGOD_SERVER_TESTNET;
+            algod_port = process.env.VUE_APP_ALGOD_PORT_TESTNET;
 
             //no access to kmd for testnet
             break;
