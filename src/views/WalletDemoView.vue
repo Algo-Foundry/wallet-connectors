@@ -51,32 +51,76 @@ export default {
         async connectMyAlgo() {
             this.network = "TestNet";
 
-            // write your code here
-
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.receiver = "";
-            // this.connection = "myalgo";
+            const myAlgoWallet = new MyAlgoConnect();
+            const accounts = await myAlgoWallet.connect();
+            this.sender = accounts[0].address;
+            this.receiver = "";
+            this.connection = "myalgo";
         },
         async connectToAlgoSigner(network) {
             this.network = network;
 
-            // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.receiver = "";
-            // this.connection = "algosigner";
+            const AlgoSigner = window.AlgoSigner;
+
+            if (typeof AlgoSigner !== "undefined") {
+                await AlgoSigner.connect();
+                const accounts = await AlgoSigner.accounts({
+                    ledger: this.network,
+                });
+
+                this.sender = accounts[0].address;
+                this.receiver = "";
+                this.connection = "algosigner";
+            }
         },
         async connectToWalletConnect() {
             this.network = "TestNet";
 
-            // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.receiver = "";
-            // this.connection = "algosigner";
+            // Create a connector
+            this.connector = new WalletConnect({
+                bridge: "https://bridge.walletconnect.org", // Required
+                qrcodeModal: QRCodeModal,
+            });
+
+            // Kill existing session
+            if (this.connector.connected) {
+                await this.connector.killSession();
+            }
+
+            this.connector.createSession();
+
+            // Subscribe to connection events
+            this.connector.on("connect", (error, payload) => {
+                if (error) {
+                    throw error;
+                }
+
+                const { accounts } = payload.params[0];
+                this.sender = accounts[0];
+                this.receiver = "K2VOMCI54VDAEKBFJQNLIRVXXS5CWH6ECNSPVALEGTDZP5AQUJHR72UGPI";
+                this.connection = "walletconnect";
+            });
+
+            this.connector.on("session_update", (error, payload) => {
+                if (error) {
+                    throw error;
+                }
+
+                const { accounts } = payload.params[0];
+                this.sender = accounts[0];
+                this.connection = "walletconnect";
+            });
+
+            this.connector.on("disconnect", (error, payload) => {
+                if (error) {
+                    throw error;
+                }
+
+                // Delete connector
+                console.log(payload);
+                this.sender = "";
+                this.connection = "";
+            });
         },
     },
 };
