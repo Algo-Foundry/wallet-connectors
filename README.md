@@ -57,6 +57,7 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 #### Pera Wallet
 1. Download [Pera Wallet](https://perawallet.app/)
 2. Create TestNet accounts under your Pera Wallet.
+3. When performing transactions using Pera Wallet, please switch the node settings to TestNet. This can be done via `Settings > Developer Settings > Node Settings > TestNet`
 
 #### Fund TestNet accounts
 1. Use the [faucet](https://bank.testnet.algorand.network/) to fund your TestNet accounts. You will need to have some funds to maintain account balance and pay transaction fees.
