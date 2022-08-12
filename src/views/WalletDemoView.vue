@@ -52,9 +52,11 @@ export default {
             this.network = "TestNet";
 
             const myAlgoWallet = new MyAlgoConnect();
-            const accounts = await myAlgoWallet.connect();
+            const accounts = await myAlgoWallet.connect({
+                openManager: true
+            });
             this.sender = accounts[0].address;
-            this.receiver = "";
+            this.receiver = accounts[1].address;
             this.connection = "myalgo";
         },
         async connectToAlgoSigner(network) {
@@ -68,8 +70,15 @@ export default {
                     ledger: this.network,
                 });
 
-                this.sender = accounts[0].address;
-                this.receiver = "";
+                if (this.network === "Localhost") {
+                    // use non-creator address
+                    this.sender = process.env.VUE_APP_ACC1_ADDR;
+                    this.receiver = process.env.VUE_APP_ACC2_ADDR;
+                } else {
+                    this.sender = accounts[0].address;
+                    this.receiver = accounts[1].address;
+                }
+
                 this.connection = "algosigner";
             }
         },
@@ -97,7 +106,7 @@ export default {
 
                 const { accounts } = payload.params[0];
                 this.sender = accounts[0];
-                this.receiver = "K2VOMCI54VDAEKBFJQNLIRVXXS5CWH6ECNSPVALEGTDZP5AQUJHR72UGPI";
+                this.receiver = process.env.VUE_APP_WC_RECEIVER_ADDR;
                 this.connection = "walletconnect";
             });
 
