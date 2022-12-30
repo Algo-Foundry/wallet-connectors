@@ -62,21 +62,19 @@ export default {
         async connectToAlgoSigner(network) {
             this.network = network;
 
-            const AlgoSigner = window.AlgoSigner;
+            const algorand = window.algorand;
 
-            if (typeof AlgoSigner !== "undefined") {
-                await AlgoSigner.connect();
-                const accounts = await AlgoSigner.accounts({
-                    ledger: this.network,
-                });
-
+            if (typeof algorand !== "undefined") {
+                const response = await algorand.enable()
+                const accounts = response.accounts;
+                
                 if (this.network === "Localhost") {
                     // use non-creator address
                     this.sender = process.env.VUE_APP_ACC1_ADDR;
                     this.receiver = process.env.VUE_APP_ACC2_ADDR;
                 } else {
-                    this.sender = accounts[0].address;
-                    this.receiver = accounts[1].address;
+                    this.sender = accounts[0];
+                    this.receiver = accounts[1];
                 }
 
                 this.connection = "algosigner";

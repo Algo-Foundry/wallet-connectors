@@ -7,22 +7,22 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 // Contains a list of methods to send transactions via different wallet connectors
 
 const sendAlgoSignerTransaction = async (txn, algodClient) => {
-    const AlgoSigner = window.AlgoSigner;
+    const algorand = window.algorand;
 
-    if (typeof AlgoSigner !== "undefined") {
+    if (typeof algorand !== "undefined") {
         try {
             // Get the binary and base64 encode it
             let binaryTx = txn.toByte();
-            let base64Tx = AlgoSigner.encoding.msgpackToBase64(binaryTx);
+            let base64Tx = algorand.encoding.msgpackToBase64(binaryTx);
 
-            let signedTxs = await AlgoSigner.signTxn([
+            let signedTxs = await algorand.signTxns([
                 {
                     txn: base64Tx,
                 },
             ]);
 
             // Get the base64 encoded signed transaction and convert it to binary
-            let binarySignedTx = AlgoSigner.encoding.base64ToMsgpack(signedTxs[0].blob);
+            let binarySignedTx = algorand.encoding.base64ToMsgpack(signedTxs[0]);
 
             const response = await algodClient.sendRawTransaction(binarySignedTx).do();
             console.log(response);
