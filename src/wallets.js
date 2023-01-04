@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import algosdk from "algosdk";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
@@ -7,25 +5,24 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 // Contains a list of methods to send transactions via different wallet connectors
 
 const sendAlgoSignerTransaction = async (txn, algodClient) => {
-    const AlgoSigner = window.AlgoSigner;
-
-    if (typeof AlgoSigner !== "undefined") {
+    const algorand = window.algorand;
+    if (typeof algorand !== "undefined") {        
         try {
             // Get the binary and base64 encode it
             let binaryTx = txn.toByte();
-            let base64Tx = AlgoSigner.encoding.msgpackToBase64(binaryTx);
+            let base64Tx = algorand.encoding.msgpackToBase64(binaryTx);
 
-            let signedTxs = await AlgoSigner.signTxn([
+            let signedTxs = await algorand.signTxns([
                 {
                     txn: base64Tx,
                 },
             ]);
 
-            // Get the base64 encoded signed transaction and convert it to binary
-            let binarySignedTx = AlgoSigner.encoding.base64ToMsgpack(signedTxs[0].blob);
+            let binarySignedTxn = algorand.encoding.base64ToMsgpack(signedTxs[0]);
+            const response = await algodClient.sendRawTransaction(binarySignedTxn).do();
 
-            const response = await algodClient.sendRawTransaction(binarySignedTx).do();
-            console.log(response);
+            // wait for blockchain confirmation within 4 rounds
+            await algosdk.waitForConfirmation(algodClient, response.txId, 4);
 
             return response;
         } catch (err) {
@@ -41,7 +38,9 @@ const sendWalletConnectTransaction = async (connector, txn, algodClient) => {
         // i.e txns = [txn, ...someotherTxns], but we've only built one transaction in our case
         const txns = [txn];
         const txnsToSign = txns.map((txn) => {
-            const encodedTxn = Buffer.from(algosdk.encodeUnsignedTransaction(txn)).toString("base64");
+            const encodedTxn = Buffer.from(
+                algosdk.encodeUnsignedTransaction(txn)
+            ).toString("base64");
 
             return {
                 txn: encodedTxn,
@@ -57,11 +56,18 @@ const sendWalletConnectTransaction = async (connector, txn, algodClient) => {
         const request = formatJsonRpcRequest("algo_signTxn", requestParams);
         const result = await connector.sendCustomRequest(request);
         const decodedResult = result.map((element) => {
-            return element ? new Uint8Array(Buffer.from(element, "base64")) : null;
+            return element
+                ? new Uint8Array(Buffer.from(element, "base64"))
+                : null;
         });
 
-        const response = await algodClient.sendRawTransaction(decodedResult).do();
+        const response = await algodClient
+            .sendRawTransaction(decodedResult)
+            .do();
         console.log(response);
+
+        // wait for blockchain confirmation within 4 rounds
+        await algosdk.waitForConfirmation(algodClient, response.txId, 4);
 
         return response;
     } catch (err) {
@@ -74,8 +80,13 @@ const sendMyAlgoTransaction = async (txn, algodClient) => {
         const myAlgoWallet = new MyAlgoConnect();
 
         const signedTxn = await myAlgoWallet.signTransaction(txn.toByte());
-        const response = await algodClient.sendRawTransaction(signedTxn.blob).do();
+        const response = await algodClient
+            .sendRawTransaction(signedTxn.blob)
+            .do();
         console.log(response);
+
+        // wait for blockchain confirmation within 4 rounds
+        await algosdk.waitForConfirmation(algodClient, response.txId, 4);
 
         return response;
     } catch (err) {
@@ -86,5 +97,5 @@ const sendMyAlgoTransaction = async (txn, algodClient) => {
 export default {
     sendWalletConnectTransaction,
     sendMyAlgoTransaction,
-    sendAlgoSignerTransaction,
+    sendAlgoSignerTransaction
 };
