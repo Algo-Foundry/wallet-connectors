@@ -3,8 +3,7 @@
         <h3>Select wallet</h3>
         <div class="d-grid gap-2 mb-5">
             <button @click="connectMyAlgo" class="btn btn-primary">MyAlgo</button>
-            <button @click="connectToAlgoSigner('Localhost')" class="btn btn-primary">AlgoSigner (Localhost)</button>
-            <button @click="connectToAlgoSigner('TestNet')" class="btn btn-primary">AlgoSigner (TestNet)</button>
+            <button @click="connectToAlgoSigner" class="btn btn-primary">AlgoSigner</button>
             <button @click="connectToWalletConnect" class="btn btn-primary mr-3">WalletConnect</button>
         </div>
         <div v-if="this.sender !== ''" class="mb-5">
@@ -35,14 +34,14 @@
 
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import WalletConnect from "@walletconnect/client";
-import QRCodeModal from "@walletconnect/qrcode-modal";
+import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 
 export default {
     data() {
         return {
             connection: "", // myalgo | walletconnect | algosigner
             connector: null, // wallet connector obj
-            network: "", // Localhost | TestNet
+            network: "SandNet", // SandNet | TestNet
             sender: "", // connected account
             receiver: "",
         };
@@ -58,8 +57,7 @@ export default {
             // this.receiver = "";
             // this.connection = "myalgo";
         },
-        async connectToAlgoSigner(network) {
-            this.network = network;
+        async connectToAlgoSigner() {
 
             // write your code here
             
