@@ -62,7 +62,14 @@ export default {
             const algorand = window.algorand;
 
             if (typeof algorand !== "undefined") {
+                // there are issues fetching the correct genesisID from sandbox
                 const res = await algorand.enable();
+
+                if (res.genesisID === "testnet-v1.0") {
+                    this.network = "TestNet"
+                } else {
+                    this.network = "SandNet"
+                }
 
                 this.sender = res.accounts[0];
                 this.receiver = res.accounts[1];
