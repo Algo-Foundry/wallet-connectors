@@ -3,7 +3,7 @@
         <h3>Select wallet</h3>
         <div class="d-grid gap-2 mb-5">
             <button @click="connectMyAlgo" class="btn btn-primary">MyAlgo</button>
-            <button @click="connectToAlgoSigner" class="btn btn-primary">AlgoSigner</button>
+            <button @click="connectToAlgoSigner" class="btn btn-primary">AlgoSigner (Sandbox)</button>
             <button @click="connectToWalletConnect" class="btn btn-primary mr-3">WalletConnect</button>
         </div>
         <div v-if="this.sender !== ''" class="mb-5">
@@ -51,28 +51,25 @@ export default {
             this.network = "TestNet";
 
             const myAlgoWallet = new MyAlgoConnect();
-            const accounts = await myAlgoWallet.connect({
-                openManager: true
-            });
+            const accounts = await myAlgoWallet.connect();
             this.sender = accounts[0].address;
             this.receiver = accounts[1].address;
             this.connection = "myalgo";
         },
         async connectToAlgoSigner() {
-            const algorand = window.algorand;
+            // force connection to sandbox
+            this.network = "SandNet";
 
-            if (typeof algorand !== "undefined") {
-                // there are issues fetching the correct genesisID from sandbox
-                const res = await algorand.enable();
+            const AlgoSigner = window.AlgoSigner;
 
-                if (res.genesisID === "testnet-v1.0") {
-                    this.network = "TestNet"
-                } else {
-                    this.network = "SandNet"
-                }
+            if (typeof AlgoSigner !== "undefined") {
+                await AlgoSigner.connect();
+                const accounts = await AlgoSigner.accounts({
+                    ledger: this.network,
+                });
 
-                this.sender = res.accounts[0];
-                this.receiver = res.accounts[1];
+                this.sender = accounts[0].address;
+                this.receiver = accounts[1].address;
 
                 this.connection = "algosigner";
             }
