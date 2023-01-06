@@ -13,10 +13,6 @@ yarn install
 
 ### 2. Update environement variables
 1. Copy `.env.example` to `.env`.
-2. Set env variables
-```
-source .env
-```
 
 #### Get account mnemonic
 To get the mnemonic of an account in goal CLI, replace the `<account address>` run this command in your sandbox directory.
