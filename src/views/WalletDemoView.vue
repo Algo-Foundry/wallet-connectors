@@ -3,7 +3,7 @@
         <h3>Select wallet</h3>
         <div class="d-grid gap-2 mb-5">
             <button @click="connectMyAlgo" class="btn btn-primary">MyAlgo</button>
-            <button @click="connectToAlgoSigner" class="btn btn-primary">AlgoSigner</button>
+            <button @click="connectToAlgoSigner" class="btn btn-primary">AlgoSigner (Sandbox)</button>
             <button @click="connectToWalletConnect" class="btn btn-primary mr-3">WalletConnect</button>
         </div>
         <div v-if="this.sender !== ''" class="mb-5">
@@ -41,7 +41,7 @@ export default {
         return {
             connection: "", // myalgo | walletconnect | algosigner
             connector: null, // wallet connector obj
-            network: "SandNet", // SandNet | TestNet
+            network: "", // network name
             sender: "", // connected account
             receiver: "",
         };
@@ -58,6 +58,7 @@ export default {
             // this.connection = "myalgo";
         },
         async connectToAlgoSigner() {
+            this.network = "SandNet";
 
             // write your code here
             
