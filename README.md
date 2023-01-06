@@ -13,7 +13,6 @@ yarn install
 
 ### 2. Update environement variables
 1. Copy `.env.example` to `.env`.
-2. Add account information (address and mnemonic) into the `.env` file.
 
 #### Get account mnemonic
 To get the mnemonic of an account in goal CLI, replace the `<account address>` run this command in your sandbox directory.
@@ -31,7 +30,7 @@ To get the mnemonic of an account in goal CLI, replace the `<account address>` r
 1. Follow the instructions [here](https://github.com/PureStake/algosigner/blob/develop/docs/add-network.md) on how to add private network (a.k.a Algorand Sandbox) on AlgoSigner. These are the fields to be added
 ```
 # Display name
-Localhost
+SandNet
 
 # Network ID
 sandnet-v1
