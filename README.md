@@ -31,7 +31,7 @@ To get the mnemonic of an account in goal CLI, replace the `<account address>` r
 1. Follow the instructions [here](https://github.com/PureStake/algosigner/blob/develop/docs/add-network.md) on how to add private network (a.k.a Algorand Sandbox) on AlgoSigner. These are the fields to be added
 ```
 # Display name
-Localhost
+SandNet
 
 # Network ID
 sandnet-v1
