@@ -14,12 +14,6 @@ yarn install
 ### 2. Update environement variables
 1. Copy `.env.example` to `.env`.
 
-#### Get account mnemonic
-To get the mnemonic of an account in goal CLI, replace the `<account address>` run this command in your sandbox directory.
-```
-./sandbox goal account export -a <account address>
-```
-
 ### 3. Setup wallets and test accounts
 #### AlgoSigner
 1. Download [AlgoSigner browser extension](https://chrome.google.com/webstore/detail/algosigner/kmmolakhbgdlpkjkcjkebenjheonagdm)
