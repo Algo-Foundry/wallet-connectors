@@ -48,29 +48,93 @@ export default {
         async connectToWalletConnect() {
             this.network = "TestNet";
 
-            // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.connection = "walletconnect";
+            // Create a connector
+            this.walletclient = new WalletConnect({
+                bridge: "https://bridge.walletconnect.org", // Required
+                qrcodeModal: QRCodeModal,
+            });
+
+            // // Kill existing session
+            if (this.walletclient.connected) {
+                await this.walletclient.killSession();
+            }
+
+            this.walletclient.createSession();
+
+            // Subscribe to connection events
+            this.walletclient.on("connect", (error, payload) => {
+                if (error) {
+                    throw error;
+                }
+
+                const { accounts } = payload.params[0];
+                this.sender = accounts[0];
+                this.connection = "walletconnect";
+            });
+
+            this.walletclient.on("session_update", (error, payload) => {
+                if (error) {
+                    throw error;
+                }
+
+                const { accounts } = payload.params[0];
+                this.sender = accounts[0];
+                this.connection = "walletconnect";
+            });
+
+            this.walletclient.on("disconnect", (error) => {
+                if (error) {
+                    throw error;
+                }
+            });
         },
         async connectToPeraWallet() {
             this.network = "TestNet";
 
-            // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.connection = "perawallet";
+            this.walletclient = await new PeraWalletConnect();
+
+            try {
+                // reconnect session if it exists
+                let accounts = await this.walletclient.reconnectSession();
+
+                if (accounts.length <= 0) {
+                    accounts = await this.walletclient.connect();
+                }
+
+                // disconnect listener
+                this.walletclient.connector?.on("disconnect", (error) => {
+                    if (error) {
+                        throw error;
+                    }
+                });
+
+                // you will need pera wallet instance to sign transactions
+                this.sender = accounts[0];
+                this.connection = "perawallet";
+            } catch (err) {
+                console.error(err);
+            }
         },
         async connectToDeflyWallet() {
             this.network = "TestNet";
 
-            // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.connection = "defly
+            this.walletclient = new DeflyWalletConnect();
+
+            // reconnect session if it exists
+            let accounts = await this.walletclient.reconnectSession();
+
+            if (accounts.length <= 0) {
+                accounts = await this.walletclient.connect();
+            }
+
+            this.walletclient.connector?.on("disconnect", (error) => {
+                if (error) {
+                    throw error;
+                }
+            });
+
+            this.sender = accounts[0];
+            this.connection = "deflywallet";
         }
     },
 };
