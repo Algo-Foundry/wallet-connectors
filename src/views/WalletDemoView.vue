@@ -17,6 +17,7 @@
             <p>
                 Account: <span>{{ this.sender }}</span>
             </p>
+            <button @click="disconnect" class="btn btn-primary">Disconnect</button>
         </div>
         <send-algo-form
             v-if="this.sender !== ''"
@@ -71,7 +72,24 @@ export default {
             // update these values upon successful connection
             // this.sender = "";
             // this.connection = "defly
-        }
+        },
+        async disconnect() {
+            switch (this.connection) {
+                case "perawallet":
+                case "deflywallet":
+                    await this.walletclient.disconnect();
+                    break;
+                case "walletconnect":
+                    await this.walletclient.killSession();
+                    break;
+                default:
+                    break;
+            }
+
+            this.sender = "";
+            this.connection = "";
+            this.walletclient = null;
+        },
     },
 };
 </script>
