@@ -22,7 +22,7 @@
         <send-algo-form
             v-if="this.sender !== ''"
             :connection="this.connection"
-            :walletConnector="this.connector"
+            :walletclient="this.walletclient"
             :network="this.network"
             :sender="this.sender"
         />

@@ -11,7 +11,7 @@
             </div>
             <div class="mb-3">
                 <label for="receiver" class="form-label">Receiver</label>
-                <input type="string" class="form-control" id="receiver" v-model="receiverAddr" />
+                <input type="string" class="form-control" id="receiver" v-model="receiver" />
             </div>
             <button type="submit" class="btn btn-primary">Send</button>
         </form>
@@ -35,7 +35,7 @@ export default {
     data() {
         return {
             txId: "",
-            receiverAddr: "",
+            receiver: "TP3SP4KTN3FLY6PVO4J57SE4OHG7UE6STCAHZYKSY3CP4ENB3MOOJFKAYE",
             amount: algosdk.algosToMicroalgos(0.1),
             explorerURL: "",
         };
@@ -70,9 +70,6 @@ export default {
                     break;
             }
         },
-    },
-    async mounted() {
-        this.receiverAddr = this.receiver;
-    },
+    }
 };
 </script>
