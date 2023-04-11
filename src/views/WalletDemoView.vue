@@ -22,7 +22,7 @@
         <send-algo-form
             v-if="this.sender !== ''"
             :connection="this.connection"
-            :walletConnector="this.connector"
+            :walletclient="this.walletclient"
             :network="this.network"
             :sender="this.sender"
         />
@@ -50,28 +50,16 @@ export default {
             this.network = "TestNet";
 
             // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.connection = "walletconnect";
         },
         async connectToPeraWallet() {
             this.network = "TestNet";
 
             // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.connection = "perawallet";
         },
         async connectToDeflyWallet() {
             this.network = "TestNet";
 
             // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.connection = "defly
         },
         async disconnect() {
             switch (this.connection) {
