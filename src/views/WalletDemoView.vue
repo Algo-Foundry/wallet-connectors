@@ -2,9 +2,9 @@
     <div id="sendalgo-app">
         <h3>Select wallet</h3>
         <div class="d-grid gap-2 mb-5">
-            <button @click="connectMyAlgo" class="btn btn-primary">MyAlgo</button>
-            <button @click="connectToAlgoSigner" class="btn btn-primary">AlgoSigner (Sandbox)</button>
             <button @click="connectToWalletConnect" class="btn btn-primary mr-3">WalletConnect</button>
+            <button @click="connectToPeraWallet" class="btn btn-primary mr-3">Pera Wallet</button>
+            <button @click="connectToDeflyWallet" class="btn btn-primary mr-3">Defly Wallet</button>
         </div>
         <div v-if="this.sender !== ''" class="mb-5">
             <h3>Connected</h3>
@@ -24,49 +24,27 @@
             :walletConnector="this.connector"
             :network="this.network"
             :sender="this.sender"
-            :receiver="this.receiver"
         />
     </div>
 </template>
 
 <script>
 /* eslint-disable */
-
-import MyAlgoConnect from "@randlabs/myalgo-connect";
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
+import { PeraWalletConnect } from "@perawallet/connect";
+import { DeflyWalletConnect } from "@blockshake/defly-connect";
 
 export default {
     data() {
         return {
-            connection: "", // myalgo | walletconnect | algosigner
-            connector: null, // wallet connector obj
+            connection: "", // walletconnect | perawallet | defly
+            walletclient: null, // instance of PeraWalletConnect | DeflyWalletConnect | WalletConnect
             network: "", // network name
             sender: "", // connected account
-            receiver: "",
         };
     },
     methods: {
-        async connectMyAlgo() {
-            this.network = "TestNet";
-
-            // write your code here
-
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.receiver = "";
-            // this.connection = "myalgo";
-        },
-        async connectToAlgoSigner() {
-            this.network = "SandNet";
-
-            // write your code here
-            
-            // update these values upon successful connection
-            // this.sender = "";
-            // this.receiver = "";
-            // this.connection = "algosigner";
-        },
         async connectToWalletConnect() {
             this.network = "TestNet";
 
@@ -74,9 +52,26 @@ export default {
             
             // update these values upon successful connection
             // this.sender = "";
-            // this.receiver = "";
-            // this.connection = "algosigner";
+            // this.connection = "walletconnect";
         },
+        async connectToPeraWallet() {
+            this.network = "TestNet";
+
+            // write your code here
+            
+            // update these values upon successful connection
+            // this.sender = "";
+            // this.connection = "perawallet";
+        },
+        async connectToDeflyWallet() {
+            this.network = "TestNet";
+
+            // write your code here
+            
+            // update these values upon successful connection
+            // this.sender = "";
+            // this.connection = "defly
+        }
     },
 };
 </script>
