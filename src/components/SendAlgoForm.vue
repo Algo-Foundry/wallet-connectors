@@ -20,16 +20,17 @@
 
 <script>
 import algosdk from "algosdk";
-import sendalgos from "../sendalgos.js";
+import txns from "../txns";
 import WalletConnect from "@walletconnect/client";
+import { PeraWalletConnect } from "@perawallet/connect";
+import { DeflyWalletConnect } from "@blockshake/defly-connect";
 
 export default {
     props: {
         connection: String,
-        walletConnector: WalletConnect,
+        walletclient: [WalletConnect, PeraWalletConnect, DeflyWalletConnect],
         network: String,
         sender: String,
-        receiver: String,
     },
     data() {
         return {
@@ -39,39 +40,24 @@ export default {
             explorerURL: "",
         };
     },
-    watch: {
-        receiver: function (newVal) {
-            // updates receiver address on connector change
-            this.receiverAddr = newVal;
-        },
-    },
     methods: {
         async sendAlgos() {
-            let response;
+            try {
+                const response = await txns.sendPaymentTxn(
+                    this.connection,
+                    this.walletclient,
+                    this.sender,
+                    this.receiver,
+                    this.amount,
+                    this.network
+                );
 
-            switch (this.connection) {
-                case "algosigner":
-                    response = await sendalgos.viaAlgoSigner(this.sender, this.receiverAddr, this.amount, this.network);
-                    break;
-                case "walletconnect":
-                    response = await sendalgos.viaWalletConnect(
-                        this.walletConnector,
-                        this.sender,
-                        this.receiverAddr,
-                        this.amount,
-                        this.network
-                    );
-                    break;
-                case "myalgo":
-                    response = await sendalgos.viaMyAlgo(this.sender, this.receiverAddr, this.amount, this.network);
-                    break;
-                default:
-                    break;
-            }
-
-            if (response !== undefined) {
-                this.txId = response.txId;
-                this.setExplorerURL(response.txId);
+                if (response !== undefined) {
+                    this.txId = response.txId;
+                    this.setExplorerURL(response.txId);
+                }
+            } catch (err) {
+                alert(err.message);
             }
         },
         setExplorerURL(txId) {

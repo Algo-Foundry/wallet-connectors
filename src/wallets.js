@@ -1,35 +1,10 @@
 import algosdk from "algosdk";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
-import MyAlgoConnect from "@randlabs/myalgo-connect";
 
 // Contains a list of methods to send transactions via different wallet connectors
 
-const sendAlgoSignerTransaction = async (txn, algodClient) => {
-    const AlgoSigner = window.AlgoSigner;
-
-    if (typeof AlgoSigner !== "undefined") {        
-        try {
-            // Get the binary and base64 encode it
-            let binaryTx = txn.toByte();
-            let base64Tx = AlgoSigner.encoding.msgpackToBase64(binaryTx);
-
-            let signedTxs = await AlgoSigner.signTxn([
-                {
-                    txn: base64Tx,
-                },
-            ]);
-
-            let binarySignedTxn = AlgoSigner.encoding.base64ToMsgpack(signedTxs[0].blob);
-            const response = await algodClient.sendRawTransaction(binarySignedTxn).do();
-
-            // wait for blockchain confirmation within 4 rounds
-            await algosdk.waitForConfirmation(algodClient, response.txId, 4);
-
-            return response;
-        } catch (err) {
-            console.error(err);
-        }
-    }
+const sendPeraWalletTransaction = async (connector, txn, algodClient) => {
+    // write your code here
 };
 
 const sendWalletConnectTransaction = async (connector, txn, algodClient) => {
@@ -76,27 +51,21 @@ const sendWalletConnectTransaction = async (connector, txn, algodClient) => {
     }
 };
 
-const sendMyAlgoTransaction = async (txn, algodClient) => {
-    try {
-        const myAlgoWallet = new MyAlgoConnect();
+const sendDeflyWalletTransaction = async (connector, txn, algodClient) => {
+    // write your code here
+};
 
-        const signedTxn = await myAlgoWallet.signTransaction(txn.toByte());
-        const response = await algodClient
-            .sendRawTransaction(signedTxn.blob)
-            .do();
-        console.log(response);
+const submitTxns = async (algodClient, signedTxnsData) => {
+    // submit txn to chain and wait for confirmation
+    const response = await algodClient.sendRawTransaction(signedTxnsData).do();
 
-        // wait for blockchain confirmation within 4 rounds
-        await algosdk.waitForConfirmation(algodClient, response.txId, 4);
+    await algosdk.waitForConfirmation(algodClient, response.txId, 4);
 
-        return response;
-    } catch (err) {
-        console.error(err);
-    }
+    return response;
 };
 
 export default {
     sendWalletConnectTransaction,
-    sendMyAlgoTransaction,
-    sendAlgoSignerTransaction
+    sendPeraWalletTransaction,
+    sendDeflyWalletTransaction,
 };
