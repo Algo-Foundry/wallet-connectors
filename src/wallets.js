@@ -78,8 +78,8 @@ const submitTxns = async (algodClient, signedTxnsData) => {
     return response;
 };
 
-const getAccountInfo = async (accountAddr) => {
-    const algodClient = getAlgodClient();
+const getAccountInfo = async (accountAddr, network) => {
+    const algodClient = getAlgodClient(network);
     return await algodClient.accountInformation(accountAddr).do();
 }
 

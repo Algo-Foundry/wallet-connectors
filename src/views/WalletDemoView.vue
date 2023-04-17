@@ -55,10 +55,8 @@ export default {
     methods: {
         async queryAccountInfo() {
             // call this function upon successful connection
-
             if (this.sender === "") return;
-            const account = await wallets.getAccountInfo(this.sender);
-
+            const account = await wallets.getAccountInfo(this.sender, this.network);
             if (account) {
                 this.balance = account.amount;
             }
@@ -121,48 +119,60 @@ export default {
         async connectToPeraWallet() {
             this.network = "TestNet";
 
-            this.walletclient = await new PeraWalletConnect();
+            try {
+                this.walletclient = await new PeraWalletConnect();
 
-            // reconnect session if it exists
-            let accounts = await this.walletclient.reconnectSession();
+                // reconnect session if it exists
+                let accounts = await this.walletclient.reconnectSession();
 
-            if (accounts.length <= 0) {
-                accounts = await this.walletclient.connect();
-            }
-
-            // disconnect listener
-            this.walletclient.connector?.on("disconnect", (error) => {
-                if (error) {
-                    throw error;
+                if (accounts.length <= 0) {
+                    accounts = await this.walletclient.connect();
                 }
-            });
 
-            // you will need pera wallet instance to sign transactions
-            this.sender = accounts[0];
-            this.connection = "perawallet";
-            await this.queryAccountInfo();
+                // disconnect listener
+                this.walletclient.connector?.on("disconnect", (error) => {
+                    if (error) {
+                        throw error;
+                    }
+                });
+
+                // you will need pera wallet instance to sign transactions
+                this.sender = accounts[0];
+                this.connection = "perawallet";
+                await this.queryAccountInfo();
+            } catch (error) {
+                if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
+                    // log the necessary errors
+                }
+            }
         },
         async connectToDeflyWallet() {
             this.network = "TestNet";
 
-            this.walletclient = new DeflyWalletConnect();
+            try {
+                this.walletclient = new DeflyWalletConnect();
 
-            // reconnect session if it exists
-            let accounts = await this.walletclient.reconnectSession();
+                // reconnect session if it exists
+                let accounts = await this.walletclient.reconnectSession();
 
-            if (accounts.length <= 0) {
-                accounts = await this.walletclient.connect();
-            }
-
-            this.walletclient.connector?.on("disconnect", (error) => {
-                if (error) {
-                    throw error;
+                if (accounts.length <= 0) {
+                    accounts = await this.walletclient.connect();
                 }
-            });
 
-            this.sender = accounts[0];
-            this.connection = "deflywallet";
-            await this.queryAccountInfo();
+                this.walletclient.connector?.on("disconnect", (error) => {
+                    if (error) {
+                        throw error;
+                    }
+                });
+
+                this.sender = accounts[0];
+                this.connection = "deflywallet";
+                await this.queryAccountInfo();
+            } catch (error) {
+                if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
+                    // log the necessary errors
+                }
+            }
         },
         async disconnect() {
             switch (this.connection) {
