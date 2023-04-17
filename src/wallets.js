@@ -1,5 +1,6 @@
 import algosdk from "algosdk";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
+import { getAlgodClient } from "./client.js";
 
 // Contains a list of methods to send transactions via different wallet connectors
 
@@ -61,6 +62,13 @@ const sendDeflyWalletTransaction = async (connector, txn, algodClient) => {
     return submitTxns(algodClient, signedTxns);
 };
 
+const sendSandboxTransaction = async (connector, txn, algodClient) => {
+    // for sandbox, connector is the secret key of the connected account
+    const signedTxn = txn.signTxn(connector);
+
+    return submitTxns(algodClient, signedTxn);
+}
+
 const submitTxns = async (algodClient, signedTxnsData) => {
     // submit txn to chain and wait for confirmation
     const response = await algodClient.sendRawTransaction(signedTxnsData).do();
@@ -70,8 +78,15 @@ const submitTxns = async (algodClient, signedTxnsData) => {
     return response;
 };
 
+const getAccountInfo = async (accountAddr) => {
+    const algodClient = getAlgodClient();
+    return await algodClient.accountInformation(accountAddr).do();
+}
+
 export default {
     sendWalletConnectTransaction,
     sendPeraWalletTransaction,
     sendDeflyWalletTransaction,
+    sendSandboxTransaction,
+    getAccountInfo
 };

@@ -5,6 +5,7 @@
             <button @click="connectToWalletConnect" class="btn btn-primary mr-3">WalletConnect</button>
             <button @click="connectToPeraWallet" class="btn btn-primary mr-3">Pera Wallet</button>
             <button @click="connectToDeflyWallet" class="btn btn-primary mr-3">Defly Wallet</button>
+            <button @click="connectToSandNet" class="btn btn-primary mr-3">Sandbox (SandNet)</button>
         </div>
         <div v-if="this.sender !== ''" class="mb-5">
             <h3>Connected</h3>
@@ -16,6 +17,9 @@
             </p>
             <p>
                 Account: <span>{{ this.sender }}</span>
+            </p>
+            <p>
+                Balance: <span>{{ this.balance }}</span>
             </p>
             <button @click="disconnect" class="btn btn-primary">Disconnect</button>
         </div>
@@ -35,6 +39,8 @@ import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { PeraWalletConnect } from "@perawallet/connect";
 import { DeflyWalletConnect } from "@blockshake/defly-connect";
+import kmd from "../kmd";
+import wallets from '../wallets';
 
 export default {
     data() {
@@ -42,10 +48,31 @@ export default {
             connection: "", // walletconnect | perawallet | defly
             walletclient: null, // instance of PeraWalletConnect | DeflyWalletConnect | WalletConnect
             network: "", // network name
-            sender: "", // connected account
+            sender: "", // connected account,
+            balance: 0
         };
     },
     methods: {
+        async queryAccountInfo() {
+            // call this function upon successful connection
+
+            if (this.sender === "") return;
+            const account = await wallets.getAccountInfo(this.sender);
+
+            if (account) {
+                this.balance = account.amount;
+            }
+        },
+        async connectToSandNet() {
+            this.network = "SandNet";
+            const accounts = await kmd.getSandboxAccounts();
+            this.sender = accounts[0].addr;
+            this.connection = "sandbox";
+
+            // we will use pass the secret key of this sandbox account via walletclient
+            this.walletclient = accounts[0].sk;
+            await this.queryAccountInfo();
+        },
         async connectToWalletConnect() {
             this.network = "TestNet";
 
@@ -63,7 +90,7 @@ export default {
             this.walletclient.createSession();
 
             // Subscribe to connection events
-            this.walletclient.on("connect", (error, payload) => {
+            this.walletclient.on("connect", async (error, payload) => {
                 if (error) {
                     throw error;
                 }
@@ -71,9 +98,10 @@ export default {
                 const { accounts } = payload.params[0];
                 this.sender = accounts[0];
                 this.connection = "walletconnect";
+                await this.queryAccountInfo();
             });
 
-            this.walletclient.on("session_update", (error, payload) => {
+            this.walletclient.on("session_update", async (error, payload) => {
                 if (error) {
                     throw error;
                 }
@@ -81,6 +109,7 @@ export default {
                 const { accounts } = payload.params[0];
                 this.sender = accounts[0];
                 this.connection = "walletconnect";
+                await this.queryAccountInfo();
             });
 
             this.walletclient.on("disconnect", (error) => {
@@ -94,27 +123,24 @@ export default {
 
             this.walletclient = await new PeraWalletConnect();
 
-            try {
-                // reconnect session if it exists
-                let accounts = await this.walletclient.reconnectSession();
+            // reconnect session if it exists
+            let accounts = await this.walletclient.reconnectSession();
 
-                if (accounts.length <= 0) {
-                    accounts = await this.walletclient.connect();
-                }
-
-                // disconnect listener
-                this.walletclient.connector?.on("disconnect", (error) => {
-                    if (error) {
-                        throw error;
-                    }
-                });
-
-                // you will need pera wallet instance to sign transactions
-                this.sender = accounts[0];
-                this.connection = "perawallet";
-            } catch (err) {
-                console.error(err);
+            if (accounts.length <= 0) {
+                accounts = await this.walletclient.connect();
             }
+
+            // disconnect listener
+            this.walletclient.connector?.on("disconnect", (error) => {
+                if (error) {
+                    throw error;
+                }
+            });
+
+            // you will need pera wallet instance to sign transactions
+            this.sender = accounts[0];
+            this.connection = "perawallet";
+            await this.queryAccountInfo();
         },
         async connectToDeflyWallet() {
             this.network = "TestNet";
@@ -136,6 +162,7 @@ export default {
 
             this.sender = accounts[0];
             this.connection = "deflywallet";
+            await this.queryAccountInfo();
         },
         async disconnect() {
             switch (this.connection) {
@@ -152,6 +179,7 @@ export default {
 
             this.sender = "";
             this.connection = "";
+            this.balance = 0;
             this.walletclient = null;
         },
     },
