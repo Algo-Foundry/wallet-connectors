@@ -1,10 +1,11 @@
 # Wallet connector assignment
 
-**Update: AlgoSigner and MyAlgo integration has been removed for this assignment.**
+Complete the wallet connector integration for this sample Dapp. There are 2 objectives in this assignment,
 
-Complete the wallet connector integration for this sample Dapp. A user should be able to connect to either WalletConnect, Pera Wallet or Defly Wallet and perform a payment transaction to another account.
+1. A user should be able to connect to either WalletConnect, Pera Wallet, Defly Wallet or the KMD (Sandbox) and perform a payment transaction to another account.
+2. Display connected user's balance on the UI. [hint](https://algorand.github.io/js-algorand-sdk/classes/Algodv2.html#accountInformation)
 
-You will need to fill in the wallet integration codes in `wallets.js` and `WalletDemoView.vue`.
+You will need to fill in the wallet integration codes in `wallets.js`, `WalletDemoView.vue` and `kmd.js`.
 
 ## Setup instructions
 
@@ -37,6 +38,9 @@ yarn install
 
 #### Fund TestNet accounts
 1. Use the [faucet](https://bank.testnet.algorand.network/) to fund your TestNet accounts. You will need to have some funds to maintain account balance and pay transaction fees.
+
+#### KMD (Sandbox)
+1. Refer to the [demo](https://github.com/Algo-Foundry/demo-wallet-connectors) on how to connect to the KMD to get the accounts on Sandbox.
 
 ### 4. Use the .env file
 ```
