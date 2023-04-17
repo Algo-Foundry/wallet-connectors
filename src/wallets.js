@@ -79,7 +79,7 @@ const submitTxns = async (algodClient, signedTxnsData) => {
     return response;
 };
 
-const getAccountInfo = async (accountAddr) => {
+const getAccountInfo = async (accountAddr, network) => {
     // wrtie your code here
 }
 
