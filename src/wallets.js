@@ -1,7 +1,7 @@
 /* eslint-disable */
-
 import algosdk from "algosdk";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
+import { getAlgodClient } from "./client.js";
 
 // Contains a list of methods to send transactions via different wallet connectors
 
@@ -26,8 +26,13 @@ const submitTxns = async (algodClient, signedTxnsData) => {
     return response;
 };
 
+const getAccountInfo = async (accountAddr) => {
+    // wrtie your code here
+}
+
 export default {
     sendWalletConnectTransaction,
     sendPeraWalletTransaction,
     sendDeflyWalletTransaction,
+    getAccountInfo
 };

@@ -5,6 +5,7 @@
             <button @click="connectToWalletConnect" class="btn btn-primary mr-3">WalletConnect</button>
             <button @click="connectToPeraWallet" class="btn btn-primary mr-3">Pera Wallet</button>
             <button @click="connectToDeflyWallet" class="btn btn-primary mr-3">Defly Wallet</button>
+            <button @click="connectToSandNet" class="btn btn-primary mr-3">Sandbox (SandNet)</button>
         </div>
         <div v-if="this.sender !== ''" class="mb-5">
             <h3>Connected</h3>
@@ -16,6 +17,9 @@
             </p>
             <p>
                 Account: <span>{{ this.sender }}</span>
+            </p>
+            <p>
+                Balance (microAlgos): <span>{{ this.balance }}</span>
             </p>
             <button @click="disconnect" class="btn btn-primary">Disconnect</button>
         </div>
@@ -35,6 +39,8 @@ import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "algorand-walletconnect-qrcode-modal";
 import { PeraWalletConnect } from "@perawallet/connect";
 import { DeflyWalletConnect } from "@blockshake/defly-connect";
+import kmd from "../kmd";
+import wallets from "../wallets";
 
 export default {
     data() {
@@ -43,9 +49,20 @@ export default {
             walletclient: null, // instance of PeraWalletConnect | DeflyWalletConnect | WalletConnect
             network: "", // network name
             sender: "", // connected account
+            balance: 0,
         };
     },
     methods: {
+        async queryAccountInfo() {
+            // call this function upon successful connection
+
+            // write your code here
+        },
+        async connectToSandNet() {
+            this.network = "SandNet";
+
+            // write your code here
+        },
         async connectToWalletConnect() {
             this.network = "TestNet";
 
