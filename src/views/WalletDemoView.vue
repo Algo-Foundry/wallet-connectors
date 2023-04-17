@@ -93,6 +93,7 @@ export default {
 
             this.sender = "";
             this.connection = "";
+            this.balance = 0;
             this.walletclient = null;
         },
     },
