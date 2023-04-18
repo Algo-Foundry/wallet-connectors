@@ -1,6 +1,7 @@
 import algosdk from "algosdk";
 import { formatJsonRpcRequest } from "@json-rpc-tools/utils";
 import { getAlgodClient } from "./client.js";
+import kmd from "./kmd";
 
 // Contains a list of methods to send transactions via different wallet connectors
 
@@ -62,9 +63,11 @@ const sendDeflyWalletTransaction = async (connector, txn, algodClient) => {
     return submitTxns(algodClient, signedTxns);
 };
 
-const sendSandboxTransaction = async (connector, txn, algodClient) => {
-    // for sandbox, connector is the secret key of the connected account
-    const signedTxn = txn.signTxn(connector);
+const sendSandboxTransaction = async (txn, algodClient) => {
+    // get sender private key
+    const senderAddr = algosdk.encodeAddress(txn.from.publicKey);
+    const privateKey = await kmd.getPrivateKey(senderAddr);
+    const signedTxn = txn.signTxn(privateKey);
 
     return submitTxns(algodClient, signedTxn);
 }

@@ -1,5 +1,4 @@
 import { getKmdClient } from "./client";
-import algosdk from "algosdk";
 
 const getWalletHandle = async (wallet_name, wallet_password) => {
   const kmdclient = getKmdClient();
@@ -20,21 +19,25 @@ const getSandboxAccounts = async () => {
   const wallethandle = await getWalletHandle(walletname, walletpass);
   const keys = await kmdclient.listKeys(wallethandle);
   
-  // export secret key for each sandbox account and create an algorand account instance
-  const accounts = Promise.all(keys.addresses.map(async (address) => {
-    let accountKey = await kmdclient.exportKey(
-      wallethandle,
-      walletpass,
-      address
-    );
-    let mn = await algosdk.secretKeyToMnemonic(accountKey.private_key);
+  return keys.addresses;
+}
 
-    return algosdk.mnemonicToSecretKey(mn)
-  }));
+const getPrivateKey = async (addr) => {
+  const kmdclient = getKmdClient();
+  const walletname = process.env.VUE_APP_WALLET_NAME;
+  const walletpass = process.env.VUE_APP_WALLET_PASSWORD;
+  const wallethandle = await getWalletHandle(walletname, walletpass);
   
-  return accounts;
+  let accountKey = await kmdclient.exportKey(
+    wallethandle,
+    walletpass,
+    addr
+  );
+  
+  return accountKey.private_key;
 }
 
 export default {
-  getSandboxAccounts
+  getSandboxAccounts,
+  getPrivateKey
 }

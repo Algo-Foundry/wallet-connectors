@@ -27,7 +27,7 @@ const sendPaymentTxn = async (connection, connector, from, to, algosToSend, netw
         case "deflywallet":
             return await wallets.sendDeflyWalletTransaction(connector, txn, algodClient);
         case "sandbox":
-            return await wallets.sendSandboxTransaction(connector, txn, algodClient);
+            return await wallets.sendSandboxTransaction(txn, algodClient);
         default:
             return;
     }
