@@ -52,6 +52,16 @@ export default {
             balance: 0
         };
     },
+    watch: {
+        sender: {
+            async handler(newSender, oldSender) {
+                if (newSender !== oldSender) {
+                    await this.queryAccountInfo();
+                }
+            },
+            deep: true
+        }
+    },
     methods: {
         async queryAccountInfo() {
             // call this function upon successful connection
@@ -66,7 +76,6 @@ export default {
             const accounts = await kmd.getSandboxAccounts();
             this.sender = accounts[0];
             this.connection = "sandbox";
-            await this.queryAccountInfo();
         },
         async connectToWalletConnect() {
             this.network = "TestNet";
@@ -93,7 +102,6 @@ export default {
                 const { accounts } = payload.params[0];
                 this.sender = accounts[0];
                 this.connection = "walletconnect";
-                await this.queryAccountInfo();
             });
 
             this.walletclient.on("session_update", async (error, payload) => {
@@ -104,7 +112,6 @@ export default {
                 const { accounts } = payload.params[0];
                 this.sender = accounts[0];
                 this.connection = "walletconnect";
-                await this.queryAccountInfo();
             });
 
             this.walletclient.on("disconnect", (error) => {
@@ -136,7 +143,6 @@ export default {
                 // you will need pera wallet instance to sign transactions
                 this.sender = accounts[0];
                 this.connection = "perawallet";
-                await this.queryAccountInfo();
             } catch (error) {
                 if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
                     // log the necessary errors
@@ -164,7 +170,6 @@ export default {
 
                 this.sender = accounts[0];
                 this.connection = "deflywallet";
-                await this.queryAccountInfo();
             } catch (error) {
                 if (error?.data?.type !== "CONNECT_MODAL_CLOSED") {
                     // log the necessary errors
