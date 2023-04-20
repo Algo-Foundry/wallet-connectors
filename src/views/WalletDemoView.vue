@@ -52,6 +52,16 @@ export default {
             balance: 0,
         };
     },
+    watch: {
+        network: {
+            async handler(newSender, oldSender) {
+                if (newSender !== oldSender) {
+                    // write your code here
+                }
+            },
+            deep: true
+        }
+    },
     methods: {
         async queryAccountInfo() {
             // call this function upon successful connection
